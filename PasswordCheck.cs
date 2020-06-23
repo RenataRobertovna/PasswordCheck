@@ -29,6 +29,17 @@ namespace PasswordCheck
             passwordLength = 8;
         }
 
+        public PasswordCheck(int length, string symbols1, string symbols2, string symbols3, string symbols4)
+        {
+            passwordLength = length;
+            this.symbols1 = symbols1;
+            this.symbols2 = symbols2;
+            this.symbols3 = symbols3;
+            this.symbols4 = symbols4;
+
+            symbols = this.symbols1 + this.symbols2 + this.symbols3 + this.symbols4;
+        }
+
         public bool CheckLength(string password)
         {
             password = password.Trim();
