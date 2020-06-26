@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace PasswordCheck
 {
@@ -19,14 +20,50 @@ namespace PasswordCheck
 
         public PasswordCheck()
         {
+            /*
             symbols1 = "QWERTYUIOPASDFGHJKLZXCVBNM";
             symbols2 = "qwertyuiopasdfghjklzxcvbnm";
             symbols3 = "!@#$%^&*:;.,-_";
             symbols4 = "0123456789";
-
-            symbols = symbols1 + symbols2 + symbols3 + symbols4;
-
+            
             passwordLength = 8;
+            */
+
+            using (var file = new StreamReader("password.cfg"))
+            {
+                string tempLine;
+                while ((tempLine = file.ReadLine()) != null)
+                {
+                    tempLine = tempLine.Trim();
+                    var index = tempLine.IndexOf('=');
+                    if (index < 0) 
+                        continue;
+                    var tempSymbols = tempLine.Substring(index + 1);
+                    var tempVar = tempLine.Substring(0, index);
+                    tempSymbols = tempSymbols.Trim();
+                    tempVar = tempVar.Trim();
+
+                    switch (tempVar)
+                    {
+                        case "symbols1":
+                            symbols1 = tempSymbols;
+                            break;
+                        case "symbols2":
+                            symbols2 = tempSymbols;
+                            break;
+                        case "symbols3":
+                            symbols3 = tempSymbols;
+                            break;
+                        case "symbols4":
+                            symbols4 = tempSymbols;
+                            break;
+                        case "length":
+                            passwordLength = Convert.ToInt32(tempSymbols);
+                            break;
+                    }
+                }
+            }
+            symbols = symbols1 + symbols2 + symbols3 + symbols4;
         }
 
         public PasswordCheck(int length, string symbols1, string symbols2, string symbols3, string symbols4)
