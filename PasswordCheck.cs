@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
 
 namespace PasswordCheck
 {
@@ -29,41 +30,21 @@ namespace PasswordCheck
             passwordLength = 8;
             */
 
-            using (var file = new StreamReader("password.cfg"))
+            PasswordRequirements passwordRequirements;
+            using (var file = new FileStream("password.cfg", FileMode.Open))
             {
-                string tempLine;
-                while ((tempLine = file.ReadLine()) != null)
-                {
-                    tempLine = tempLine.Trim();
-                    var index = tempLine.IndexOf('=');
-                    if (index < 0) 
-                        continue;
-                    var tempSymbols = tempLine.Substring(index + 1);
-                    var tempVar = tempLine.Substring(0, index);
-                    tempSymbols = tempSymbols.Trim();
-                    tempVar = tempVar.Trim();
-
-                    switch (tempVar)
-                    {
-                        case "symbols1":
-                            symbols1 = tempSymbols;
-                            break;
-                        case "symbols2":
-                            symbols2 = tempSymbols;
-                            break;
-                        case "symbols3":
-                            symbols3 = tempSymbols;
-                            break;
-                        case "symbols4":
-                            symbols4 = tempSymbols;
-                            break;
-                        case "length":
-                            passwordLength = Convert.ToInt32(tempSymbols);
-                            break;
-                    }
-                }
+                passwordRequirements = JsonSerializer.DeserializeAsync<PasswordRequirements>(file).Result;
             }
+
+            symbols1 = passwordRequirements.Symbols1;
+            symbols2 = passwordRequirements.Symbols2;
+            symbols3 = passwordRequirements.Symbols3;
+            symbols4 = passwordRequirements.Symbols4;
+
             symbols = symbols1 + symbols2 + symbols3 + symbols4;
+
+            passwordLength = passwordRequirements.PasswordLength;
+
         }
 
         public PasswordCheck(int length, string symbols1, string symbols2, string symbols3, string symbols4)
@@ -95,10 +76,10 @@ namespace PasswordCheck
 
         public bool CheckSymbol(string password)
         {
-            int pass_chek1 = password.IndexOfAny(symbols1.ToCharArray());
-            int pass_chek2 = password.IndexOfAny(symbols2.ToCharArray());
-            int pass_chek3 = password.IndexOfAny(symbols3.ToCharArray());
-            int pass_chek4 = password.IndexOfAny(symbols4.ToCharArray());
+            var pass_chek1 = password.IndexOfAny(symbols1.ToCharArray());
+            var pass_chek2 = password.IndexOfAny(symbols2.ToCharArray());
+            var pass_chek3 = password.IndexOfAny(symbols3.ToCharArray());
+            var pass_chek4 = password.IndexOfAny(symbols4.ToCharArray());
 
             if (pass_chek1 == -1 || pass_chek2 == -1 || pass_chek3 == -1 || pass_chek4 == -1)
             {
