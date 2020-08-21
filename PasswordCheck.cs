@@ -31,7 +31,7 @@ namespace PasswordCheck
             */
 
             PasswordRequirements passwordRequirements;
-            using (var file = new FileStream("password.cfg", FileMode.Open))
+            using (var file = new FileStream("password.json", FileMode.Open))
             {
                 passwordRequirements = JsonSerializer.DeserializeAsync<PasswordRequirements>(file).Result;
             }
